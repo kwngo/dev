@@ -27,9 +27,8 @@ resource "digitalocean_droplet" "dev" {
   provisioner "remote-exec" {
     inline = [
       "export PATH=$PATH:/usr/bin",
-      "adduser --quiet --shell /bin/bash --home /home/kwngo -p $(openssl passwd -crypt testpass) kwngo",
-      "usermod -aG docker kwngo",
-      "echo 'kwngo:testpass'"
+      "adduser --quiet --disabled-password --shell /bin/bash --home /home/kwngo --gecos \"User\" kwngo",
+      "echo \"kwngo:testpass\" | chpasswd &&  usermod -aG docker kwngo"
     ]
   }
 }
