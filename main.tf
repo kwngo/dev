@@ -1,10 +1,3 @@
-variable "do_token" {}
-variable "pub_key" {}
-variable "pvt_key" {}
-variable "ssh_fingerprint" {}
-
-
-
 provider "digitalocean" {
   token = "${var.do_token}"
 }
@@ -15,10 +8,11 @@ resource "digitalocean_ssh_key" "default" {
 }
 
 resource "digitalocean_droplet" "dev" {
-  image  = "ubuntu-14-04-x64"
+  image  = "docker-18-04"
   name   = "dev"
   region = "nyc3"
   size   = "1gb"
+  ipv6 = true
   ssh_keys = [
     "${digitalocean_ssh_key.default.fingerprint}"
   ]
@@ -32,7 +26,10 @@ resource "digitalocean_droplet" "dev" {
 
   provisioner "remote-exec" {
     inline = [
-      "export PATH=$PATH:/usr/bin"
+      "export PATH=$PATH:/usr/bin",
+      "adduser --quiet --shell /bin/bash --home /home/kwngo -p $(openssl passwd -crypt testpass) kwngo",
+      "usermod -aG docker kwngo",
+      "echo 'kwngo:testpass'"
     ]
   }
 }
