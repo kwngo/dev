@@ -32,3 +32,15 @@ resource "digitalocean_droplet" "dev" {
     ]
   }
 }
+
+resource "digitalocean_domain" "default" {
+   name = "kareem.codes"
+   ip_address = "${digitalocean_droplet.dev.ipv4_address}"
+}
+
+resource "digitalocean_record" "CNAME-dev" {
+  domain = "${digitalocean_domain.default.name}"
+  type = "CNAME"
+  name = "dev"
+  value ="@"
+}
